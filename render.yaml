@@ -1,0 +1,33 @@
+databases:
+  - name: casa-bolo-db
+    plan: free
+    databaseName: casa_bolo_production
+    user: casa_bolo
+
+services:
+  - type: web
+    name: casa-do-bolo-de-cenoura
+    runtime: ruby
+    plan: free
+    buildCommand: ./bin/render-build.sh
+    startCommand: bundle exec puma -C config/puma.rb
+    postDeployCommand: ./bin/render-postdeploy.sh
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: FORCE_SSL
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: casa-bolo-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: RUN_SEEDS_ON_DEPLOY
+        value: "true"
