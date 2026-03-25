@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    container_name: cat_app
+    volumes:
+      - .:/app
+    depends_on:
+      - db

@@ -1,0 +1,104 @@
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Receitas do mes</span>
+      <strong><%= number_to_currency(@monthly_income) %></strong>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Despesas do mes</span>
+      <strong><%= number_to_currency(@monthly_expenses) %></strong>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Saldo do mes</span>
+      <strong><%= number_to_currency(@monthly_balance) %></strong>
+    </div>
+  </div>
+</div>
+
+<div class="card border mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="mb-1">Financeiro</h3>
+        <p class="text-muted mb-0">Receitas e despesas da operacao da Casa do bolo de cenoura.</p>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge text-bg-light border"><%= FinancialEntry.count %> lancamentos</span>
+        <%= link_to "Novo lancamento", new_admin_financial_entry_path, class: "btn btn-dark btn-sm" %>
+      </div>
+    </div>
+
+    <%= search_form_for @q, url: admin_financial_entries_path, method: :get, class: "row g-3" do |f| %>
+      <div class="col-md-4">
+        <%= f.search_field :title_or_category_cont, class: "form-control", placeholder: "Titulo ou categoria" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.select :kind_eq, FinancialEntry.kinds.map { |key, value| [key == "income" ? "Receita" : "Despesa", value] }, { include_blank: "Tipo" }, class: "form-control" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.select :payment_status_eq, FinancialEntry.payment_statuses.map { |key, value| [FinancialEntry.new(payment_status: key).payment_status_label, value] }, { include_blank: "Situacao" }, class: "form-control" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.date_field :occurred_on_gteq, class: "form-control" %>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <%= link_to "Limpar", admin_financial_entries_path, class: "btn btn-light border w-100" %>
+        <%= button_tag "Pesquisar", type: "submit", class: "btn btn-dark w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card border">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Lancamento</th>
+          <th>Tipo</th>
+          <th>Situacao</th>
+          <th>Data</th>
+          <th>Pedido</th>
+          <th>Valor</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @financial_entries.each do |entry| %>
+          <tr>
+            <td>
+              <strong class="d-block"><%= entry.title %></strong>
+              <small class="text-muted"><%= entry.category %></small>
+            </td>
+            <td><span class="badge text-bg-<%= entry.kind_badge_class %>"><%= entry.kind_label %></span></td>
+            <td><%= entry.payment_status_label %></td>
+            <td><%= l(entry.occurred_on) %></td>
+            <td>
+              <% if entry.order.present? %>
+                <%= link_to entry.order.code, admin_order_path(entry.order), class: "text-decoration-none" %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+            <td><strong><%= number_to_currency(entry.amount) %></strong></td>
+            <td class="text-end">
+              <% if entry.editable_manually? %>
+                <%= link_to "Editar", edit_admin_financial_entry_path(entry), class: "btn btn-sm btn-outline-secondary" %>
+                <%= link_to "Excluir", admin_financial_entry_path(entry), class: "btn btn-sm btn-outline-danger", data: { turbo_method: :delete, turbo_confirm: "Deseja remover este lancamento?" } %>
+              <% else %>
+                <span class="text-muted small">Automatico</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white">
+    <%= render partial: "shared/admin/pagination", locals: { pagy: @pagy } %>
+  </div>
+</div>

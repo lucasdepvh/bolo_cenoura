@@ -1,0 +1,67 @@
+<nav class="navbar-classic navbar navbar-expand-lg">
+    <div class="container">
+        <%= link_to admin_root_path, class: "navbar-brand d-flex align-items-center gap-2" do %>
+            <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "brand-logo-image brand-logo-image-admin" %>
+            <span class="fw-semibold text-dark">Painel Casa do bolo de cenoura</span>
+        <% end %>
+        <ul class="navbar-nav navbar-right-wrap ms-auto d-flex nav-top-wrap">
+     
+            <li class="dropdown ms-2">
+                <a class="rounded-circle" href="#" role="button" id="dropdownUser" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="avatar avatar-md avatar-indicators avatar-online">
+                    <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "rounded-circle admin-avatar-logo" %>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
+                    <div class="px-4 pb-0 pt-2">
+                    <div class="lh-1 ">
+                        <h5 class="mb-1"><%= current_admin.email %></h5>
+                        <span class="text-inherit fs-6">Administrador</span>
+                    </div>
+                    <div class=" dropdown-divider mt-3 mb-2"></div>
+                    </div>
+                    <ul class="list-unstyled">
+                    <li>
+                        <%= link_to edit_admin_profile_path, class: 'dropdown-item' do %>
+                            <i class="bi bi-person me-2"></i>
+                            Meu perfil
+                        <% end %>
+                    </li>
+                    <li>
+                        <%= link_to destroy_admin_session_path, class: 'dropdown-item', data: { turbo_method: :delete } do %>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power me-2 icon-xxs dropdown-item-icon">
+                                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                <line x1="12" y1="2" x2="12" y2="12"></line>
+                            </svg>
+                            Sair
+                        <% end %>
+                    </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <ul class="list-unstyled d-sm-flex gap-4 my-3 admin-nav-links">
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Dashboard', admin_root_path, class: 'text-secondary' %>
+        </li>
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Produtos', admin_products_path, class: 'text-secondary' %>
+        </li>
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Categorias', admin_categories_path, class: 'text-secondary' %>
+        </li>
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Clientes', admin_customers_path, class: 'text-secondary' %>
+        </li>
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Pedidos', admin_orders_path, class: 'text-secondary' %>
+        </li>
+        <li class="mb-2 mb-sm-0">
+            <%= link_to 'Financeiro', admin_financial_entries_path, class: 'text-secondary' %>
+        </li>
+    </ul>
+</div>

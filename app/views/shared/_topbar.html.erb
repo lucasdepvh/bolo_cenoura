@@ -1,0 +1,16 @@
+<nav class="navbar-classic navbar navbar-expand-lg site-topbar">
+  <div class="container">
+    <%= link_to root_path, class: 'navbar-brand brand-925' do %>
+      <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "brand-logo-image" %>
+      <span class="brand-text">
+        <strong>Casa do bolo de cenoura</strong>
+        <small>Bolos fresquinhos todos os dias</small>
+      </span>
+    <% end %>
+
+    <div class="topbar-links">
+      <%= link_to "Quem somos", who_we_are_path, class: "topbar-link" %>
+      <%= link_to "Login", new_admin_session_path, class: "topbar-link" %>
+    </div>
+  </div>
+</nav>

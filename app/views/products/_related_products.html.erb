@@ -1,0 +1,26 @@
+<% if @relateds_products.present? %>
+<div class="pt-7">
+    <h4 class="mb-3 fw-semibold">Outros bolos que combinam com seu pedido</h4>
+    <div class="row">
+        <% @relateds_products.each do |product| %>
+        <div class="col-sm-3 col-xl-3 mb-7">
+            <div class="card card-image-product">
+                <%= link_to product_path(product) do %>
+                <%= image_tag set_image_product_or_ilustration_src(product), alt: "Minha Imagem", class: 'card-img-top' %>
+                <% end %>
+                <div class="card-body">
+                    <h6 class="fs-4"><%= product.title %></h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h6 class="fs-4 mb-0">
+                            <%= number_to_currency(product.price, unit: "R$ ", separator: ",", delimiter: ".", precision: 2) %>
+                        </h6>
+                        <%= link_to "Ver", product_path(product), class: "btn btn-sm btn-outline-secondary" %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
+</div>
+</div>
+<% end %>

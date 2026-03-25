@@ -1,0 +1,68 @@
+<div class="card border mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="mb-1">Pedidos</h3>
+        <p class="text-muted mb-0">Visualize status, forma de entrega e faturamento por pedido.</p>
+      </div>
+      <span class="badge text-bg-light border"><%= Order.count %> pedidos</span>
+    </div>
+
+    <%= search_form_for @q, url: admin_orders_path, method: :get, class: "row g-3" do |f| %>
+      <div class="col-md-3">
+        <%= f.search_field :code_or_customer_name_cont, class: "form-control", placeholder: "Codigo ou cliente" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.select :status_eq, Order.statuses.map { |key, value| [Order.new(status: key).status_label, value] }, { include_blank: "Status" }, class: "form-control" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.select :payment_method_eq, Order.payment_methods.map { |key, value| [Order.new(payment_method: key).payment_method_label, value] }, { include_blank: "Pagamento" }, class: "form-control" %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :fulfillment_type_eq, Order.fulfillment_types.map { |key, value| [key == "delivery" ? "Entrega" : "Retirada", value] }, { include_blank: "Entrega ou retirada" }, class: "form-control" %>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <%= link_to "Limpar", admin_orders_path, class: "btn btn-light border w-100" %>
+        <%= button_tag "Pesquisar", type: "submit", class: "btn btn-dark w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card border">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Codigo</th>
+          <th>Cliente</th>
+          <th>Status</th>
+          <th>Pagamento</th>
+          <th>Entrega</th>
+          <th>Estoque</th>
+          <th>Total</th>
+          <th>Agendado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr>
+            <td><strong><%= order.code %></strong></td>
+            <td><%= order.customer.name %></td>
+            <td><span class="badge text-bg-<%= order.status_badge_class %>"><%= order.status_label %></span></td>
+            <td><%= order.payment_method_label %></td>
+            <td><%= order.fulfillment_type_label %></td>
+            <td><span class="badge <%= order.stock_deducted? ? 'text-bg-success' : 'text-bg-light border text-dark' %>"><%= order.stock_deducted? ? 'Baixado' : 'Pendente' %></span></td>
+            <td><%= number_to_currency(order.total_amount) %></td>
+            <td><%= order.scheduled_for.present? ? l(order.scheduled_for, format: :short) : "-" %></td>
+            <td><%= link_to "Detalhes", admin_order_path(order), class: "btn btn-sm btn-outline-secondary" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white">
+    <%= render partial: "shared/admin/pagination", locals: { pagy: @pagy } %>
+  </div>
+</div>

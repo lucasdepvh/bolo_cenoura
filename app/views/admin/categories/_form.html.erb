@@ -1,0 +1,16 @@
+<%= form_with(model: [:admin, @category]) do |f| %>
+<div class="row">
+    <div class="col-12 mb-4">
+        <%= f.label :description, "Descrição", class: 'mb-1' %>
+        <%= f.text_field :description, class: 'form-control', placeholder: 'Bolos recheados' %>
+    </div>
+    <div class="col-12 d-flex justify-content-end flex-end">
+        <%= link_to admin_categories_path, class: 'btn btn-danger me-1' do %>
+            <i class="bi bi-house me-1"></i> Voltar
+        <% end %>
+        <%= button_tag(type: "submit", class: "btn btn-success") do %>
+            <i class="bi bi-floppy me-1"></i> Salvar
+        <% end %>
+    </div>
+</div>
+<% end %>

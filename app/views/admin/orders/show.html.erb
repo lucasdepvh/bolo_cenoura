@@ -1,0 +1,164 @@
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <div>
+            <h3 class="mb-1">Pedido <%= @order.code %></h3>
+            <p class="text-muted mb-0">Criado em <%= l(@order.created_at, format: :long) %></p>
+          </div>
+          <span class="badge text-bg-<%= @order.status_badge_class %> fs-6"><%= @order.status_label %></span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantidade</th>
+                <th>Unitario</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @order.order_items.each do |item| %>
+                <tr>
+                  <td><%= item.product_name %></td>
+                  <td><%= item.quantity %></td>
+                  <td><%= number_to_currency(item.unit_price) %></td>
+                  <td><%= number_to_currency(item.total_price) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Lancamentos vinculados</h4>
+        <% if @order.financial_entries.any? %>
+          <% @order.financial_entries.each do |entry| %>
+            <div class="financial-entry-card mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge text-bg-<%= entry.kind_badge_class %>"><%= entry.kind_label %></span>
+                <strong><%= number_to_currency(entry.amount) %></strong>
+              </div>
+              <strong class="d-block"><%= entry.title %></strong>
+              <small class="text-muted"><%= entry.category %> | <%= entry.payment_status_label %> | <%= l(entry.occurred_on) %></small>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted mb-0">Nenhum lancamento financeiro vinculado a este pedido.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Resumo</h4>
+        <% if @order.errors.any? %>
+          <div class="alert alert-danger">
+            <% @order.errors.full_messages.each do |message| %>
+              <div><%= message %></div>
+            <% end %>
+          </div>
+        <% end %>
+        <div class="info-row">
+          <span>Cliente</span>
+          <strong><%= link_to @order.customer.name, admin_customer_path(@order.customer), class: "text-decoration-none" %></strong>
+        </div>
+        <div class="info-row">
+          <span>Telefone</span>
+          <strong><%= @order.customer.phone %></strong>
+        </div>
+        <div class="info-row">
+          <span>Entrega</span>
+          <strong><%= @order.fulfillment_type_label %></strong>
+        </div>
+        <div class="info-row">
+          <span>Pagamento</span>
+          <strong><%= @order.payment_method_label %></strong>
+        </div>
+        <div class="info-row">
+          <span>Agendado</span>
+          <strong><%= @order.scheduled_for.present? ? l(@order.scheduled_for, format: :short) : "-" %></strong>
+        </div>
+        <div class="info-row">
+          <span>Subtotal</span>
+          <strong><%= number_to_currency(@order.subtotal) %></strong>
+        </div>
+        <div class="info-row">
+          <span>Taxa de entrega</span>
+          <strong><%= number_to_currency(@order.delivery_fee) %></strong>
+        </div>
+        <div class="info-row">
+          <span>Desconto</span>
+          <strong><%= number_to_currency(@order.discount) %></strong>
+        </div>
+        <div class="info-row">
+          <span>Total</span>
+          <strong><%= number_to_currency(@order.total_amount) %></strong>
+        </div>
+        <div class="info-row">
+          <span>Estoque abatido</span>
+          <strong><%= @order.stock_deducted? ? "Sim" : "Nao" %></strong>
+        </div>
+        <% if @order.notes.present? %>
+          <hr>
+          <h6>Observacoes</h6>
+          <p class="text-muted mb-0"><%= @order.notes %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Atualizar pedido</h4>
+        <%= form_with model: [:admin, @order], method: :patch do |f| %>
+          <div class="mb-3">
+            <%= f.label :status, "Status", class: "form-label" %>
+            <%= f.select :status, Order.statuses.keys.map { |key| [Order.new(status: key).status_label, key] }, {}, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :payment_method, "Pagamento", class: "form-label" %>
+            <%= f.select :payment_method, Order.payment_methods.keys.map { |key| [Order.new(payment_method: key).payment_method_label, key] }, {}, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :fulfillment_type, "Entrega", class: "form-label" %>
+            <%= f.select :fulfillment_type, [["Entrega", "delivery"], ["Retirada", "pickup"]], {}, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :scheduled_for, "Agendado para", class: "form-label" %>
+            <%= f.datetime_local_field :scheduled_for, value: @order.scheduled_for&.strftime("%Y-%m-%dT%H:%M"), class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :delivered_at, "Entregue em", class: "form-label" %>
+            <%= f.datetime_local_field :delivered_at, value: @order.delivered_at&.strftime("%Y-%m-%dT%H:%M"), class: "form-control" %>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <%= f.label :delivery_fee, "Taxa de entrega", class: "form-label" %>
+              <%= f.number_field :delivery_fee, step: 0.01, min: 0, class: "form-control" %>
+            </div>
+            <div class="col-md-6">
+              <%= f.label :discount, "Desconto", class: "form-label" %>
+              <%= f.number_field :discount, step: 0.01, min: 0, class: "form-control" %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <%= f.label :notes, "Observacoes", class: "form-label" %>
+            <%= f.text_area :notes, rows: 4, class: "form-control" %>
+          </div>
+          <%= f.submit "Salvar atualizacao", class: "btn btn-dark w-100" %>
+        <% end %>
+        <p class="small text-muted mt-3 mb-0">Quando o pedido for confirmado ou entrar em preparo, o estoque baixa automaticamente. Se cancelar depois, o sistema devolve as unidades ao estoque.</p>
+      </div>
+    </div>
+
+    <%= link_to "Voltar para pedidos", admin_orders_path, class: "btn btn-outline-secondary w-100" %>
+  </div>
+</div>

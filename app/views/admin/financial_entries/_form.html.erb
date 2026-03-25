@@ -1,0 +1,50 @@
+<%= form_with(model: [:admin, @financial_entry]) do |f| %>
+  <% if @financial_entry.errors.any? %>
+    <div class="alert alert-danger">
+      <strong class="d-block mb-2">Nao foi possivel salvar o lancamento:</strong>
+      <% @financial_entry.errors.full_messages.each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.label :title, "Titulo", class: "form-label" %>
+      <%= f.text_field :title, class: "form-control", placeholder: "Ex: Compra de farinha" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :kind, "Tipo", class: "form-label" %>
+      <%= f.select :kind, [["Receita", "income"], ["Despesa", "expense"]], {}, class: "form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :payment_status, "Situacao", class: "form-label" %>
+      <%= f.select :payment_status, [["Pendente", "pending"], ["Pago", "paid"], ["Atrasado", "overdue"]], {}, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :category, "Categoria", class: "form-label" %>
+      <%= f.text_field :category, class: "form-control", placeholder: "Ingredientes, aluguel, pedidos..." %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :amount, "Valor", class: "form-label" %>
+      <%= f.number_field :amount, step: 0.01, min: 0, class: "form-control", placeholder: "0.00" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :occurred_on, "Data", class: "form-label" %>
+      <%= f.date_field :occurred_on, class: "form-control" %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :order_id, "Pedido", class: "form-label" %>
+      <%= f.collection_select :order_id, Order.recent_first, :id, :code, { include_blank: "Sem pedido" }, class: "form-control" %>
+    </div>
+    <div class="col-12">
+      <%= f.label :notes, "Observacoes", class: "form-label" %>
+      <%= f.text_area :notes, class: "form-control", rows: 4, placeholder: "Detalhes do pagamento ou da compra" %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Voltar", admin_financial_entries_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit "Salvar lancamento", class: "btn btn-dark" %>
+  </div>
+<% end %>

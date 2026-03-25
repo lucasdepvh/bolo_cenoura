@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="shadow-none position-relative overflow-hidden my-4">
+    <div class="d-sm-flex d-block justify-content-between align-items-center">
+      <h5 class="mb-0 fw-semibold text-uppercase">Detalhes do bolo</h5>
+      <%= link_to root_path, class: 'btn btn-sm btn-outline-secondary d-inline-block d-sm-inline-flex align-items-center', id: 'backButton' do %>
+      <i class="bi bi-arrow-left me-1"></i> Voltar
+      <% end %>
+    </div>
+  </div>
+  <div class="card shadow-none border mb-3">
+    <div class="card-body p-4">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="item rounded-2 overflow-hidden card-image-product-details">
+            <%= image_tag set_image_product_or_ilustration_src(@product), class: 'img-fluid' %>
+          </div>
+        </div>
+        <div class="col-lg-8 mt-2">
+          <h4><%= @product.title %></h4>
+          <p class="mb-3 text-muted">Bolo preparado com carinho, pronto para entrar no seu pedido ou na sua encomenda especial.</p>
+          <h6 class="fs-4 mb-0">
+            Preco: <%= number_to_currency(@product.price, unit: "R$ ", separator: ",", delimiter: ".", precision: 2) %>
+          </h6>
+          <div class="row mt-3">
+            <div class="col-sm-4 mb-2">
+              <div class="detail-chip">Estoque: <strong><%= @product.stock_quantity %></strong></div>
+            </div>
+            <div class="col-sm-4 mb-2">
+              <div class="detail-chip">Preparo: <strong><%= @product.prep_time_minutes %> min</strong></div>
+            </div>
+            <div class="col-sm-4 mb-2">
+              <div class="detail-chip">Categoria: <strong><%= @product.category.description %></strong></div>
+            </div>
+          </div>
+          <div class="d-sm-flex align-items-center gap-6 pt-4 mb-2">
+            <button onclick="adicionarAoCarrinho(<%= @product.id %>, '<%= j(@product.title) %>', <%= @product.price %>)" class="btn cake-action-btn">
+              <i class="bi bi-bag-plus me-1"></i>
+              Adicionar ao pedido
+            </button>
+          </div>
+          <small class="text-muted">Finalize o pedido pelo carrinho flutuante e envie no WhatsApp.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow-none border">
+    <div class="card-body p-4">
+      <h5>Descrição</h5>
+      <hr>
+      <p><%= @product.description %></p>
+    </div>
+  </div>
+  <%= render 'related_products' %>
+</div>

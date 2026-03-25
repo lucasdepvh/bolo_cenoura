@@ -1,0 +1,59 @@
+<div class="preloader" style="display: none;">
+    <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "lds-ripple img-fluid rounded-circle admin-avatar-logo" %>
+  </div>
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100 w-100">
+      <div class="position-relative z-3">
+        <div class="row justify-content-center">
+    <div class="col-xl-5 col-xxl-4 col-lg-6 col-md-8 col-12">
+      <div class="authentication-login min-vh-100 bg-body row justify-content-center align-items-center p-4">
+        <div class="auth-max-width col-sm-8 col-md-6 col-xl-9">
+          <div class="mb-3">
+            <%= link_to root_path, class: "btn btn-sm btn-outline-secondary" do %>
+              <i class="bi bi-arrow-left me-1"></i> Voltar
+            <% end %>
+          </div>
+          <div class="mb-3 text-center">
+            <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "login-logo-image" %>
+          </div>
+          <h2 class="mb-1 fs-7 fw-bolder">Painel Administrativo</h2>
+          <p class="mb-4">Acesse o controle da Casa do bolo de cenoura</p>
+          <div class="alert alert-info border-0 mb-4" style="background: #e8f0ff;">
+            <div class="fw-semibold mb-1">Acesso padrao (teste)</div>
+            <div class="small">Email: <strong>admin@casadobolodecenoura.com</strong></div>
+            <div class="small">Senha: <strong>123456</strong></div>
+          </div>
+
+          <% if flash[:alert].present? %>
+            <div class="alert alert-danger"><%= flash[:alert] %></div>
+          <% end %>
+
+          <% if flash[:notice].present? %>
+            <div class="alert alert-success"><%= flash[:notice] %></div>
+          <% end %>
+
+          <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="mb-3">
+           <%= f.label :email, class: "form-label" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Digite seu email" %>
+          </div>
+          <div class="mb-4">
+          <%= f.label :password, "Senha", class: "form-label" %>
+            <%= f.password_field :password, autofocus: true, autocomplete: "current-password", class: "form-control", placeholder: "Digite sua senha" %>
+          </div>
+          <% if devise_mapping.rememberable? %>
+          <div class="form-check mb-3">
+            <%= f.check_box :remember_me, class: "form-check-input" %>
+            <%= f.label :remember_me, "Lembrar-me", class: "form-check-label" %>
+          </div>
+          <% end %>
+          <div class="form-group">
+            <%= f.submit "Entrar", class: "btn btn-primary w-100 mb-3 rounded-2" %>
+          </div>
+          <% end %>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

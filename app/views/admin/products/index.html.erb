@@ -1,0 +1,81 @@
+<div class="card border mb-5">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-lg-12 col-md-12 col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Produtos</h3>
+                    <%= link_to new_admin_product_path, class: 'btn border' do %>
+                        <i class="bi bi-plus me-1"></i>
+                        <span class="d-none d-sm-inline-block">Cadastrar novo produto</span>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+        <%= search_form_for @q, url: admin_products_path, method: :get, class: 'row g-3' do |f| %>
+        <div class="col-12 col-lg-4">
+            <%= f.search_field :identification_code_cont_any, class: 'form-control', placeholder: 'Identificador' %>
+        </div>
+        <div class="col-12 col-lg-4">
+            <%= f.search_field :title_cont_any, class: 'form-control', placeholder: 'Título' %>
+        </div>
+        <div class="col-12 col-lg-4">
+            <%= f.select :category_id_eq, Category.all.map{|cat| [cat.description, cat.id]}, { include_blank: 'Selecione uma categoria' }, class: 'form-control'  %>
+        </div>
+        <div class="col-12 d-flex justify-content-end mt-10">
+            <%= link_to admin_products_path, class: 'btn border me-1' do %>
+                <i class="bi bi-eraser me-1"></i>
+                <span>Limpar</span>
+            <% end %>
+            <%= button_tag(type: 'submit', class: 'btn border') do %>
+                <i class="bi bi-search me-1"></i>
+                <span>Pesquisar</span>
+            <% end %>
+        </div>
+        <% end %>
+    </div>
+</div>
+<div class="card border">
+    <div class="table-responsive rounded-top">
+        <table class="table table-hover text-nowrap mb-0">
+            <thead>
+                <th class="col-2">Identificador</th>
+                <th class="col-3">Titulo</th>
+                <th class="col-2">Preço</th>
+                <th class="col-2">Categoria</th>
+                <th class="col-1 text-center">Estoque</th>
+                <th class="col-1 text-center">Cliques</th>
+                <th class="col-2 text-center">Ações</th>
+            </thead>
+            <tbody>
+                <% @products.each do |product| %>
+                <tr>
+                    <td><%= product.identification_code %></td>
+                    <td><%= product.title %></td>
+                    <td><%= number_to_currency(product.price, unit: "R$", separator: ",", delimiter: ".") %></td>
+                    <td><%= product.category.description %></td>
+                    <td class="text-center">
+                        <span class="badge <%= product.stock_quantity <= 5 ? 'text-bg-warning' : 'bg-light text-dark border' %>"><%= product.stock_quantity %></span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-light text-dark border"><%= product.views_count %></span>
+                    </td>
+                    <td class="text-center">
+                        <%= link_to admin_product_path(product), class: 'btn btn-sm btn-primary' do %>
+                            <i class="bi bi-eye"></i>
+                        <% end %>
+                        <%= link_to edit_admin_product_path(product), class: 'btn btn-sm btn-success' do %>
+                            <i class="bi bi-pencil"></i>
+                        <% end %>
+                        <%= link_to admin_product_path(product), class: 'btn btn-sm btn-danger', data: { turbo_method: :delete, turbo_confirm: 'Você tem certeza?' } do %>
+                            <i class="bi bi-trash"></i>
+                        <% end %>
+                    </td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <div class="card-footer bg-white">
+            <%= render partial: 'shared/admin/pagination', locals: { pagy: @pagy } %>
+        </div>
+    </div>
+</div>

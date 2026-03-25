@@ -1,0 +1,123 @@
+<%= form_with(model: [:admin, @product], html: { multipart: true }) do |f| %>
+<% if @product.errors.any? %>
+<div class="alert alert-danger">
+    <h6 class="mb-2">Nao foi possivel salvar o produto:</h6>
+    <ul class="mb-0">
+        <% @product.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+    </ul>
+</div>
+<% end %>
+<div class="row mb-3">
+    <div class="col-12 col-sm-6 col-md-4 mb-3 mb-md-0">
+        <label for='imgInp' class="w-100">
+            <img src=<%= set_image_product_or_ilustration_src(@product) %> id='img-upload' class="img-fluid rounded"/>
+        </label>
+
+        <%= f.fields_for :images, @product.images.first do |ff| %>
+            <div class="col-6 col-sm-6">
+                <%= ff.file_field :data, class: 'form-control d-none', id: 'imgInp', style: 'width:0;' %>
+            </div>
+        <% end %>
+        <small class="text-muted d-block mt-2">Clique na imagem para trocar. Tamanho maximo: 5MB.</small>
+    </div>
+    <div class="col-12 col-sm-6 col-md-8">
+        <div class="row mb-3">
+            <div class="col-12 col-sm-12">
+                <%= f.label :title, "Título", class: 'mb-1' %>
+                <%= f.text_field :title, class: 'form-control', placeholder: 'Ex: Bolo de cenoura com brigadeiro' %>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 col-sm-12">
+                <%= f.label :price, "Preço", class: 'mb-1' %>
+                <%= f.number_field :price, step: 0.01, min: 0, class: 'form-control', placeholder: 'Ex: 89.90' %>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 col-sm-12">
+                <%= f.label :identification_code, "Codigo de Identificacao", class: 'mb-1' %>
+                <%= f.text_field :identification_code, class: 'form-control', placeholder: 'BOLO-001' %>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 col-sm-12">
+                <%= f.label :category_id, "Categoria", class: 'mb-1' %>
+                <%= f.select :category_id, @categories, { include_blank: 'Selecione' }, class: 'form-control mb-2' %>
+                <%= link_to new_admin_category_path, target: '_blank' do %>
+                    <i class="bi bi-plus me-1"></i> Adicionar
+                <% end %>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <%= f.label :stock_quantity, "Estoque disponivel", class: 'mb-1' %>
+                <%= f.number_field :stock_quantity, min: 0, class: 'form-control', placeholder: '12' %>
+            </div>
+            <div class="col-md-4 mb-3">
+                <%= f.label :prep_time_minutes, "Tempo de preparo (min)", class: 'mb-1' %>
+                <%= f.number_field :prep_time_minutes, min: 0, class: 'form-control', placeholder: '90' %>
+            </div>
+            <div class="col-md-4 mb-3 d-flex align-items-end">
+                <div class="w-100 rounded border p-3">
+                    <div class="form-check mb-2">
+                        <%= f.check_box :featured, class: 'form-check-input' %>
+                        <%= f.label :featured, "Destacar no site", class: 'form-check-label' %>
+                    </div>
+                    <div class="form-check">
+                        <%= f.check_box :active, class: 'form-check-input' %>
+                        <%= f.label :active, "Produto ativo", class: 'form-check-label' %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-12 col-sm-12">
+        <%= f.label :description, "Descricao", class: 'mb-1' %>
+        <%= f.text_area :description, class: 'form-control', placeholder: 'Descreva tamanho, cobertura, recheio, rendimento e diferenciais do bolo.', rows: 5 %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 d-flex justify-content-end flex-end ">
+        <%= link_to admin_products_path, class: 'btn btn-danger me-1' do %>
+            <i class="bi bi-house me-1"></i> Voltar
+        <% end %>
+        <%= button_tag(type: "submit", class: "btn btn-success") do %>
+            <i class="bi bi-floppy me-1"></i> Salvar
+        <% end %>
+    </div>
+</div>
+        <br>
+<% end %>
+
+<script>
+    function setupImagePreview() {
+        const imageInput = document.querySelector("#imgInp");
+        const imageTag = document.querySelector("#img-upload");
+
+        if (!imageInput || !imageTag) return;
+
+        imageInput.addEventListener("change", function() {
+            const file = this.files && this.files[0];
+            if (!file) return;
+
+            if (file.size > 5242880) {
+                alert("Insira arquivos de no maximo 5MB.");
+                this.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imageTag.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.addEventListener("turbo:load", setupImagePreview);
+</script>

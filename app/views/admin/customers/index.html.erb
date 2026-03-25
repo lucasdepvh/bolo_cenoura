@@ -1,0 +1,65 @@
+<div class="card border mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="mb-1">Clientes</h3>
+        <p class="text-muted mb-0">Acompanhe recorrencia, ticket medio e historico de compras.</p>
+      </div>
+      <span class="badge text-bg-light border"><%= Customer.count %> cadastrados</span>
+    </div>
+
+    <%= search_form_for @q, url: admin_customers_path, method: :get, class: "row g-3" do |f| %>
+      <div class="col-md-5">
+        <%= f.search_field :name_or_phone_or_email_cont, class: "form-control", placeholder: "Buscar por nome, telefone ou email" %>
+      </div>
+      <div class="col-md-3">
+        <%= f.search_field :neighborhood_cont, class: "form-control", placeholder: "Bairro" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.select :active_eq, [["Ativos", true], ["Inativos", false]], { include_blank: "Status" }, class: "form-control" %>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <%= link_to "Limpar", admin_customers_path, class: "btn btn-light border w-100" %>
+        <%= button_tag "Pesquisar", type: "submit", class: "btn btn-dark w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card border">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Contato</th>
+          <th>Pedidos</th>
+          <th>Total gasto</th>
+          <th>Ultimo pedido</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @customers.each do |customer| %>
+          <tr>
+            <td>
+              <strong class="d-block"><%= customer.name %></strong>
+              <small class="text-muted"><%= customer.neighborhood.presence || "Bairro nao informado" %></small>
+            </td>
+            <td>
+              <span class="d-block"><%= customer.phone %></span>
+              <small class="text-muted"><%= customer.email.presence || "Sem email" %></small>
+            </td>
+            <td><span class="badge text-bg-light border"><%= customer.total_orders %></span></td>
+            <td><%= number_to_currency(customer.total_spent) %></td>
+            <td><%= customer.last_order_at.present? ? l(customer.last_order_at, format: :short) : "-" %></td>
+            <td><%= link_to "Abrir", admin_customer_path(customer), class: "btn btn-sm btn-outline-secondary" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white">
+    <%= render partial: "shared/admin/pagination", locals: { pagy: @pagy } %>
+  </div>
+</div>

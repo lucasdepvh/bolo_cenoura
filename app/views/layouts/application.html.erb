@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Casa do bolo de cenoura</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= render 'shared/topbar' %>
+    <%= yield %>
+    <%= render 'shared/footer' %>
+
+    <div id="carrinho" class="cart-floating" style="display: none;">
+      <div class="cart-header">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-cart-fill me-2"></i>
+          <h5 class="mb-0">Pedido</h5>
+        </div>
+        <span id="cartCounter" class="badge text-bg-dark">0 itens</span>
+      </div>
+      <hr class="my-2">
+      <div id="itensCarrinho" class="cart-items"></div>
+      <div class="cart-summary mt-2 mb-2">
+        <span>Subtotal:</span>
+        <strong id="cartSubtotal">R$ 0,00</strong>
+      </div>
+      <button onclick="toggleCheckoutForm()" class="btn btn-sm btn-dark w-100 mb-2">
+        Continuar atendimento
+      </button>
+      <div id="checkoutForm" class="checkout-form" style="display: none;">
+        <div class="mb-2">
+          <input type="text" id="checkoutName" class="form-control form-control-sm" placeholder="Seu nome" />
+        </div>
+        <div class="mb-2">
+          <input type="text" id="checkoutPhone" class="form-control form-control-sm" placeholder="Telefone ou WhatsApp" />
+        </div>
+        <div class="mb-2">
+          <select id="checkoutFulfillmentType" class="form-control form-control-sm">
+            <option value="delivery">Entrega</option>
+            <option value="pickup">Retirada</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <select id="checkoutPaymentMethod" class="form-control form-control-sm">
+            <option value="pix">Pix</option>
+            <option value="cash">Dinheiro</option>
+            <option value="credit_card">Cartao de credito</option>
+            <option value="debit_card">Cartao de debito</option>
+          </select>
+        </div>
+        <div class="mb-2" id="checkoutAddressWrapper">
+          <input type="text" id="checkoutAddress" class="form-control form-control-sm" placeholder="Endereco de entrega" />
+        </div>
+        <div class="mb-2">
+          <textarea id="checkoutNotes" class="form-control form-control-sm" rows="3" placeholder="Observacoes do pedido"></textarea>
+        </div>
+        <p class="small text-muted mb-2">O pedido entra no sistema na hora e depois abre o WhatsApp para voce concluir o atendimento.</p>
+        <button onclick="finalizarCompra()" class="btn btn-sm btn-success w-100">
+          Criar pedido e enviar no WhatsApp
+          <i class="bi bi-whatsapp ms-2"></i>
+        </button>
+      </div>
+    </div>
+
+ 
+  <script>
+  function csrfToken() {
+    const tokenTag = document.querySelector('meta[name="csrf-token"]');
+    return tokenTag ? tokenTag.content : '';
+  }
+
+  function adicionarAoCarrinho(id, nome, preco) {
+  let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+  let produtoExistente = carrinho.find(item => item.id === id);
+
+  if (produtoExistente) {
+    produtoExistente.quantidade += 1;
+  } else {
+    carrinho.push({ id, nome, preco: parseFloat(preco).toFixed(2), quantidade: 1 });
+  }
+
+  localStorage.setItem('carrinho', JSON.stringify(carrinho));
+  atualizarCarrinho();
+}
+function atualizarCarrinho() {
+  const itensCarrinho = document.getElementById('itensCarrinho');
+  const carrinhoDiv = document.getElementById('carrinho');
+  const cartSubtotal = document.getElementById('cartSubtotal');
+  const cartCounter = document.getElementById('cartCounter');
+  itensCarrinho.innerHTML = '';
+
+  let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+  if (carrinho.length === 0) {
+    carrinhoDiv.style.display = 'none'; 
+    return; 
+  }
+
+  carrinhoDiv.style.display = 'block';
+  let subtotal = 0;
+  let totalItens = 0;
+
+  carrinho.forEach(item => {
+    let div = document.createElement('div');
+    div.className = 'carrinho-item';
+
+    let texto = document.createElement('span');
+    const preco = parseFloat(item.preco.toString().replace(',', '.'));
+    texto.textContent = `${item.nome} x ${item.quantidade}`;
+    texto.className = 'carrinho-item-texto';
+
+    let btnRemover = document.createElement('button');
+    btnRemover.className = 'btn btn-sm btn-outline-danger bi bi-trash';
+    btnRemover.onclick = () => removerDoCarrinho(item.id);
+
+    div.appendChild(texto);
+    div.appendChild(btnRemover);
+    itensCarrinho.appendChild(div);
+
+    subtotal += preco * item.quantidade;
+    totalItens += item.quantidade;
+  });
+
+  cartSubtotal.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+  cartCounter.textContent = `${totalItens} item${totalItens > 1 ? 's' : ''}`;
+}
+
+  function removerDoCarrinho(id) {
+    let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    carrinho = carrinho.filter(item => item.id !== id);
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    atualizarCarrinho();
+  }
+
+function finalizarCompra() {
+  let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+  if (carrinho.length === 0) {
+    alert("Seu carrinho está vazio.");
+    return;
+  }
+
+  const name = document.getElementById('checkoutName').value.trim();
+  const phone = document.getElementById('checkoutPhone').value.trim();
+
+  if (!name || !phone) {
+    alert("Preencha pelo menos nome e telefone para continuar.");
+    toggleCheckoutForm(true);
+    return;
+  }
+
+  const fulfillmentType = document.getElementById('checkoutFulfillmentType').value;
+  const address = document.getElementById('checkoutAddress').value.trim();
+
+  if (fulfillmentType === 'delivery' && !address) {
+    alert("Informe o endereco para entrega.");
+    toggleCheckoutForm(true);
+    return;
+  }
+
+  const payload = {
+    order: {
+      name: name,
+      phone: phone,
+      fulfillment_type: fulfillmentType,
+      payment_method: document.getElementById('checkoutPaymentMethod').value,
+      address: address,
+      notes: document.getElementById('checkoutNotes').value.trim(),
+      items: carrinho.map(item => ({ id: item.id, quantity: item.quantidade }))
+    }
+  };
+
+  fetch('/pedidos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken(),
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(async response => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Nao foi possivel criar o pedido.');
+      }
+      return data;
+    })
+    .then(data => {
+      localStorage.removeItem('carrinho');
+      atualizarCarrinho();
+      alert(`Pedido ${data.order_code} criado com sucesso. Vamos abrir o WhatsApp para finalizar o atendimento.`);
+      window.open(data.whatsapp_url, '_blank');
+    })
+    .catch(error => {
+      alert(error.message);
+    });
+}
+
+function toggleCheckoutForm(forceOpen = false) {
+  const form = document.getElementById('checkoutForm');
+  if (!form) return;
+
+  if (forceOpen) {
+    form.style.display = 'block';
+    return;
+  }
+
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function updateCheckoutFields() {
+  const fulfillmentType = document.getElementById('checkoutFulfillmentType');
+  const addressWrapper = document.getElementById('checkoutAddressWrapper');
+  const addressInput = document.getElementById('checkoutAddress');
+
+  if (!fulfillmentType || !addressWrapper || !addressInput) return;
+
+  const isDelivery = fulfillmentType.value === 'delivery';
+  addressWrapper.style.display = isDelivery ? 'block' : 'none';
+  addressInput.placeholder = isDelivery ? 'Endereco de entrega' : 'Retirada no local';
+
+  if (!isDelivery) addressInput.value = '';
+}
+
+  document.addEventListener('DOMContentLoaded', function() {
+    atualizarCarrinho();
+    updateCheckoutFields();
+
+    const fulfillmentType = document.getElementById('checkoutFulfillmentType');
+    if (fulfillmentType) {
+      fulfillmentType.addEventListener('change', updateCheckoutFields);
+    }
+  });
+
+  atualizarCarrinho();
+  </script>
+
+  </body>
+</html>

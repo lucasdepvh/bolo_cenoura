@@ -1,0 +1,132 @@
+<section class="dashboard-hero mb-4">
+  <div>
+    <p class="hero-kicker mb-1">Operacao</p>
+    <h1 class="hero-title mb-2">Painel da Casa do bolo de cenoura</h1>
+    <p class="hero-subtitle mb-0">Acompanhe pedidos, clientes, estoque e o resultado financeiro do mes em um unico lugar.</p>
+  </div>
+  <div class="dashboard-hero-badge">
+    <span class="d-block small text-uppercase">Lucro do mes</span>
+    <strong><%= number_to_currency(@monthly_profit) %></strong>
+  </div>
+</section>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6 col-xl-3">
+    <div class="metric-card">
+      <span class="metric-label">Produtos cadastrados</span>
+      <strong><%= @products_count %></strong>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="metric-card">
+      <span class="metric-label">Clientes</span>
+      <strong><%= @customers_count %></strong>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="metric-card">
+      <span class="metric-label">Pedidos hoje</span>
+      <strong><%= @orders_today_count %></strong>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="metric-card">
+      <span class="metric-label">Pedidos em andamento</span>
+      <strong><%= @pending_orders_count %></strong>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-xl-8">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0">Pedidos recentes</h4>
+          <%= link_to "Ver todos", admin_orders_path, class: "btn btn-sm btn-outline-secondary" %>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Cliente</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_orders.each do |order| %>
+                <tr>
+                  <td><%= order.code %></td>
+                  <td><%= order.customer.name %></td>
+                  <td><span class="badge text-bg-<%= order.status_badge_class %>"><%= order.status_label %></span></td>
+                  <td><%= number_to_currency(order.total_amount) %></td>
+                  <td><%= link_to "Abrir", admin_order_path(order), class: "btn btn-sm btn-light border" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Resumo financeiro</h4>
+        <div class="finance-line">
+          <span>Receitas do mes</span>
+          <strong><%= number_to_currency(@monthly_revenue) %></strong>
+        </div>
+        <div class="finance-line">
+          <span>Despesas do mes</span>
+          <strong><%= number_to_currency(@monthly_expenses) %></strong>
+        </div>
+        <div class="finance-line finance-line-balance">
+          <span>Resultado</span>
+          <strong><%= number_to_currency(@monthly_profit) %></strong>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Estoque baixo</h4>
+        <% @low_stock_products.each do |product| %>
+          <div class="d-flex justify-content-between align-items-center low-stock-row">
+            <div>
+              <strong class="d-block"><%= product.title %></strong>
+              <small class="text-muted"><%= product.category.description %></small>
+            </div>
+            <span class="badge text-bg-warning"><%= product.stock_quantity %> un.</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mt-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Lancamentos recentes</h4>
+      <%= link_to "Ir para financeiro", admin_financial_entries_path, class: "btn btn-sm btn-outline-secondary" %>
+    </div>
+    <div class="row g-3">
+      <% @recent_financial_entries.each do |entry| %>
+        <div class="col-md-6 col-xl-4">
+          <div class="financial-entry-card">
+            <span class="badge text-bg-<%= entry.kind_badge_class %> mb-2"><%= entry.kind_label %></span>
+            <strong class="d-block"><%= entry.title %></strong>
+            <small class="text-muted d-block mb-2"><%= entry.category %> em <%= l(entry.occurred_on) %></small>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted"><%= entry.payment_status_label %></span>
+              <strong><%= number_to_currency(entry.amount) %></strong>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

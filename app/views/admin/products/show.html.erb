@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><%= @product.title %></h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="metric-card h-100">
+                    <span class="metric-label">Cliques no site</span>
+                    <strong><%= @product.views_count %></strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="metric-card h-100">
+                    <span class="metric-label">Estoque</span>
+                    <strong><%= @product.stock_quantity %></strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="metric-card h-100">
+                    <span class="metric-label">Tempo de preparo</span>
+                    <strong><%= @product.prep_time_minutes %> min</strong>
+                </div>
+            </div>
+        </div>
+        <%= render 'form', product: @product %>
+    </div>
+</div>
