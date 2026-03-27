@@ -13,11 +13,9 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local       = true
   config.action_controller.perform_caching = true
 
-  Key: DATABASE_URL
-Value: postgresql://bolo_db_p3sc_user:KlnwLkX35uzmiuIOwO3p40oLBYeU0Eb0@dpg-d71licea2pns73f9jbe0-a.oregon-postgres.render.com/bolo_db_p3sc
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
