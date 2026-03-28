@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :orders, path: 'pedidos', only: [:create]
 
   get 'quem-somos', to: 'home#who_we_are', as: 'who_we_are'
+  get "/health", to: proc { [200, {}, ["OK"]] }
 
   get '/produtos/imagens/:id', to: 'application#product_image_show', as: 'product_image_show'
 end
