@@ -100,6 +100,6 @@ class OrdersController < ApplicationController
     message << "%0ATelefone: #{order.customer.phone}"
     message << "%0AEntrega: #{order.fulfillment_type_label}"
 
-    "https://wa.me/5569992791505?text=#{message}"
+    "https://wa.me/5569981042225?text=#{message}"
   end
 end

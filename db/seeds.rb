@@ -3,10 +3,22 @@ puts "Iniciando seed..."
 admin_email = ENV.fetch("SEED_ADMIN_EMAIL", "admin@casadobolodecenoura.com")
 admin_password = ENV.fetch("SEED_ADMIN_PASSWORD", "123456")
 
-admin = Admin.find_or_initialize_by(email: admin_email)
-admin.password = admin_password if admin.new_record?
-admin.password_confirmation = admin_password if admin.new_record?
-admin.save!
+admin_accounts = [
+  { email: admin_email, password: admin_password },
+  { email: "max@gmail.com", password: "bolo@cenoura" }
+]
+
+created_admins = 0
+
+admin_accounts.each do |attrs|
+  admin = Admin.find_or_initialize_by(email: attrs[:email])
+  if admin.new_record?
+    admin.password = attrs[:password]
+    admin.password_confirmation = attrs[:password]
+    created_admins += 1
+  end
+  admin.save!
+end
 
 old_demo_codes = %w[ANL- BRC- PLS- CLR- PNG-]
 Product.where(
@@ -131,7 +143,7 @@ if Order.count.zero?
 end
 
 puts "Seed finalizado com sucesso."
-puts "Admin: #{admin.email}"
+puts "Admins: #{Admin.count} (novos nesta execucao: #{created_admins})"
 puts "Categorias: #{Category.count}"
 puts "Produtos: #{Product.count} (novos nesta execucao: #{created_products})"
 puts "Clientes: #{Customer.count}"
