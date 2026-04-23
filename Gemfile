@@ -18,7 +18,7 @@ gem "pagy", "3.5"
 gem "pg", "1.5.4"
 
 group :development, :test do
-  gem "sqlite3", "~> 1.4"
+  # gem "sqlite3", "~> 1.4"
   gem "byebug"
   gem "dotenv-rails", "2.8.1"
 end
