@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+echo "PORT is: ${PORT:-3000}"
 echo "Running migrations..."
 bundle exec rails db:migrate
 echo "Starting server..."
