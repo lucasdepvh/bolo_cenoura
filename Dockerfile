@@ -1,5 +1,4 @@
-FROM ruby:3.1.2-slim-bullseye
-
+FROM ruby:3.1-slim-bookworm
 
 RUN apt update -qq && apt install -y build-essential libpq-dev nodejs git \
     && rm -rf /var/lib/apt/lists/*
@@ -12,9 +11,7 @@ RUN bundle install
 
 COPY . .
 
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 RUN DATABASE_URL=postgresql://dummy SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
-
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
