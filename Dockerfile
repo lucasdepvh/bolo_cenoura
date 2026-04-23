@@ -1,4 +1,5 @@
-FROM ruby:3.1-slim-bookworm
+FROM ruby:3.1.2-slim-bullseye
+
 
 RUN apt update -qq && apt install -y build-essential libpq-dev nodejs git \
     && rm -rf /var/lib/apt/lists/*
