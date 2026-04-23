@@ -13,6 +13,8 @@ RUN bundle install
 COPY . .
 
 RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+RUN DATABASE_URL=postgresql://dummy SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
