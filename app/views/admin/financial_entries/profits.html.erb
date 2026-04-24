@@ -1,0 +1,94 @@
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Entradas filtradas</span>
+      <strong><%= number_to_currency(@filtered_income) %></strong>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Despesas filtradas</span>
+      <strong><%= number_to_currency(@filtered_expenses) %></strong>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="metric-card">
+      <span class="metric-label">Lucro liquido filtrado</span>
+      <strong><%= number_to_currency(@filtered_profit) %></strong>
+    </div>
+  </div>
+</div>
+
+<div class="card border mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="mb-1">Lucros</h3>
+        <p class="text-muted mb-0">Resultado diario com base nas entradas pagas menos as despesas pagas.</p>
+      </div>
+      <%= link_to "Voltar ao financeiro", admin_financial_entries_path, class: "btn btn-outline-secondary btn-sm" %>
+    </div>
+
+    <%= form_with url: profits_admin_financial_entries_path, method: :get, local: true, class: "row g-3" do |f| %>
+      <div class="col-md-4">
+        <%= f.text_field :query, value: @filters[:query], class: "form-control", placeholder: "Titulo ou categoria" %>
+      </div>
+      <div class="col-md-3">
+        <%= f.text_field :category, value: @filters[:category], class: "form-control", placeholder: "Categoria exata" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.date_field :from, value: @filters[:from], class: "form-control" %>
+      </div>
+      <div class="col-md-2">
+        <%= f.date_field :to, value: @filters[:to], class: "form-control" %>
+      </div>
+      <div class="col-md-1 d-flex">
+        <%= button_tag "Filtrar", type: "submit", class: "btn btn-dark w-100" %>
+      </div>
+      <div class="col-12 d-flex justify-content-end">
+        <%= link_to "Limpar filtros", profits_admin_financial_entries_path, class: "btn btn-light border btn-sm" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card border">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Entradas pagas</th>
+          <th>Despesas pagas</th>
+          <th>Lucro liquido</th>
+          <th>Qtd. lancamentos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @profit_rows.any? %>
+          <% @profit_rows.each do |row| %>
+            <% profit_total = row.profit_total.to_d %>
+            <tr>
+              <td><strong><%= l(row.occurred_on) %></strong></td>
+              <td><%= number_to_currency(row.income_total.to_d) %></td>
+              <td><%= number_to_currency(row.expense_total.to_d) %></td>
+              <td>
+                <span class="badge text-bg-<%= profit_total.negative? ? "danger" : "success" %>">
+                  <%= number_to_currency(profit_total) %>
+                </span>
+              </td>
+              <td><%= row.entries_count %></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">Nenhum resultado encontrado para os filtros informados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white">
+    <%= render partial: "shared/admin/pagination", locals: { pagy: @pagy } %>
+  </div>
+</div>
