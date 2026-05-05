@@ -3,7 +3,6 @@ set -e
 echo "=== INICIANDO ==="
 echo "PORT: ${PORT}"
 echo "RAILS_ENV: ${RAILS_ENV}"
-echo "DATABASE_URL presente: ${DATABASE_URL:+sim}"
 echo "Running migrations..."
 bundle exec rails db:migrate 2>&1
 echo "=== MIGRATIONS OK ==="

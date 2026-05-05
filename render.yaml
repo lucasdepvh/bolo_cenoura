@@ -1,9 +1,3 @@
-databases:
-  - name: casa-bolo-db
-    plan: free
-    databaseName: casa_bolo_production
-    user: casa_bolo
-
 services:
   - type: web
     name: casa-do-bolo-de-cenoura
@@ -21,10 +15,6 @@ services:
         value: "true"
       - key: FORCE_SSL
         value: "true"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: casa-bolo-db
-          property: connectionString
       - key: RAILS_MASTER_KEY
         sync: false
       - key: SECRET_KEY_BASE
