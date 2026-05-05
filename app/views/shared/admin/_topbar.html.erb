@@ -4,14 +4,13 @@
             <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "brand-logo-image brand-logo-image-admin" %>
             <span class="fw-semibold text-dark">Painel Casa do bolo de cenoura</span>
         <% end %>
-        <ul class="navbar-nav navbar-right-wrap ms-auto d-flex nav-top-wrap">
-     
-            <li class="dropdown ms-2">
-                <a class="rounded-circle" href="#" role="button" id="dropdownUser" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="avatar avatar-md avatar-indicators avatar-online">
-                    <%= image_tag "bolo_cenoura.jpeg", alt: "Casa do bolo de cenoura", class: "rounded-circle admin-avatar-logo" %>
-                    </div>
-                </a>
+        <ul class="navbar-nav navbar-right-wrap ms-auto d-flex align-items-center gap-2 nav-top-wrap">
+            <li>
+                <%= link_to destroy_admin_session_path, class: 'btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1', data: { turbo: false } do %>
+                    <i class="bi bi-box-arrow-right"></i>
+                    Sair
+                <% end %>
+            </li>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
                     <div class="px-4 pb-0 pt-2">
                     <div class="lh-1 ">
@@ -28,7 +27,7 @@
                         <% end %>
                     </li>
                     <li>
-                        <%= link_to destroy_admin_session_path, class: 'dropdown-item', data: { turbo_method: :delete } do %>
+                        <%= link_to destroy_admin_session_path, class: 'dropdown-item', data: { turbo: false } do %>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power me-2 icon-xxs dropdown-item-icon">
                                 <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
                                 <line x1="12" y1="2" x2="12" y2="12"></line>
