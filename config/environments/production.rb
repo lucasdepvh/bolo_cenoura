@@ -50,6 +50,7 @@ Rails.application.configure do
 
   # Allow requests from the production VPS hostname.
   config.hosts << "lucasmt.vps-kinghost.net"
+  config.hosts << "www.lucasmt.vps-kinghost.net"
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
@@ -82,6 +83,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   config.hosts << "lucasmt.vps-kinghost.net"
+  config.hosts << "www.lucasmt.vps-kinghost.net"
 
 
   # Use a different logger for distributed setups.
