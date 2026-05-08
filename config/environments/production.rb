@@ -49,8 +49,8 @@ Rails.application.configure do
   config.force_ssl = ENV["FORCE_SSL"].present?
 
   # Allow requests from the production VPS hostname.
-  config.hosts << "lucasmt.vps-kinghost.net"
-  config.hosts << "www.lucasmt.vps-kinghost.net"
+  config.hosts << "bolocenoura.com.br"
+  config.hosts << "www.bolocenoura.com.br"
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
